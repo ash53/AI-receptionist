@@ -11,8 +11,8 @@ export default function BookAppointmentPage() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-2xl font-headline">Book an Appointment</CardTitle>
-              <CardDescription>Fill in your details to schedule a time with us.</CardDescription>
+              <CardTitle className="text-2xl font-headline">Book a Room</CardTitle>
+              <CardDescription>Fill in your details to reserve your stay.</CardDescription>
             </div>
             <Button variant="ghost" size="icon" asChild>
               <Link href="/">

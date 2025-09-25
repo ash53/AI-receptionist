@@ -12,7 +12,6 @@ import { Calendar } from "@/components/ui/calendar"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -34,22 +33,19 @@ import {
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
 
-const timeSlots = [
-  "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM",
-  "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM",
-  "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM",
-  "03:00 PM", "03:30 PM", "04:00 PM", "04:30 PM",
-];
-
 const bookingFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Please enter a valid email address."),
   phone: z.string().min(10, "Please enter a valid phone number."),
-  date: z.date({
-    required_error: "A date for the appointment is required.",
+  checkInDate: z.date({
+    required_error: "A check-in date is required.",
   }),
-  time: z.string({
-    required_error: "Please select a time slot.",
+  checkOutDate: z.date({
+    required_error: "A check-out date is required.",
+  }),
+  guests: z.coerce.number().min(1, "At least one guest is required."),
+  roomType: z.string({
+    required_error: "Please select a room type.",
   }),
 })
 
@@ -65,26 +61,26 @@ export function BookingForm() {
       name: "",
       email: "",
       phone: "",
+      guests: 1
     },
   })
 
   function onSubmit(data: BookingFormValues) {
     console.log("Booking submitted:", data)
     toast({
-      title: "Appointment Booked!",
-      description: `Thank you, ${data.name}. Your appointment on ${format(data.date, "PPP")} at ${data.time} is confirmed.`,
-      className: "bg-accent text-accent-foreground",
+      title: "Room Booking Confirmed!",
+      description: `Thank you, ${data.name}. Your ${data.roomType} room is booked from ${format(data.checkInDate, "PPP")} to ${format(data.checkOutDate, "PPP")}. We look forward to welcoming you.`,
     })
     // Here you would typically save to Firestore
     form.reset();
     setTimeout(() => {
         router.push('/')
-    }, 2000)
+    }, 3000)
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -98,39 +94,42 @@ export function BookingForm() {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="john.doe@example.com" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Phone Number</FormLabel>
-              <FormControl>
-                <Input placeholder="(123) 456-7890" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-8 sm:space-y-0">
+        <div className="grid sm:grid-cols-2 gap-6">
+            <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                    <Input placeholder="john.doe@example.com" {...field} />
+                </FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+            <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel>Phone Number</FormLabel>
+                <FormControl>
+                    <Input placeholder="(123) 456-7890" {...field} />
+                </FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
+            />
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-6">
           <FormField
             control={form.control}
-            name="date"
+            name="checkInDate"
             render={({ field }) => (
-              <FormItem className="flex flex-col flex-1">
-                <FormLabel>Date</FormLabel>
+              <FormItem className="flex flex-col">
+                <FormLabel>Check-in Date</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -166,33 +165,88 @@ export function BookingForm() {
               </FormItem>
             )}
           />
-          <FormField
+           <FormField
             control={form.control}
-            name="time"
+            name="checkOutDate"
             render={({ field }) => (
-              <FormItem className="flex-1">
-                <FormLabel>Time</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a time slot" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {timeSlots.map((slot) => (
-                      <SelectItem key={slot} value={slot}>
-                        {slot}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <FormItem className="flex flex-col">
+                <FormLabel>Check-out Date</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-full pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value ? (
+                          format(field.value, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) =>
+                        date < (form.getValues('checkInDate') || new Date(new Date().setHours(0,0,0,0)))
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
+        <div className="grid sm:grid-cols-2 gap-6">
+            <FormField
+                control={form.control}
+                name="guests"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Number of Guests</FormLabel>
+                    <FormControl>
+                        <Input type="number" min="1" max="10" placeholder="2" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="roomType"
+                render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Room Type</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                        <SelectTrigger>
+                        <SelectValue placeholder="Select a room type" />
+                        </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                        <SelectItem value="Single">Single</SelectItem>
+                        <SelectItem value="Double">Double</SelectItem>
+                        <SelectItem value="Suite">Suite</SelectItem>
+                    </SelectContent>
+                    </Select>
+                    <FormMessage />
+                </FormItem>
+                )}
+            />
+        </div>
+
         <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? 'Booking...' : 'Confirm Appointment'}
+          {form.formState.isSubmitting ? 'Reserving...' : 'Confirm Reservation'}
         </Button>
       </form>
     </Form>

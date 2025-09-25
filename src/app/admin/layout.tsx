@@ -6,8 +6,7 @@ import {
   BrainCircuit,
   MessageSquare,
   Calendar,
-  Settings,
-  Bot,
+  Building,
   LogOut,
   ChevronLeft,
 } from "lucide-react";
@@ -25,7 +24,6 @@ import {
   SidebarInset,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 export default function AdminLayout({
   children,
@@ -36,7 +34,7 @@ export default function AdminLayout({
 
   const menuItems = [
     { href: "/admin/chats", label: "Chats", icon: MessageSquare },
-    { href: "/admin/appointments", label: "Appointments", icon: Calendar },
+    { href: "/admin/appointments", label: "Bookings", icon: Calendar },
     { href: "/admin/training", label: "AI Training", icon: BrainCircuit },
   ];
 
@@ -47,10 +45,10 @@ export default function AdminLayout({
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" className="shrink-0" asChild>
               <Link href="/">
-                <Bot />
+                <Building />
               </Link>
             </Button>
-            <h1 className="text-lg font-semibold font-headline">AI Receptionist</h1>
+            <h1 className="text-lg font-semibold font-headline">Hotel Admin</h1>
           </div>
         </SidebarHeader>
         <SidebarContent>

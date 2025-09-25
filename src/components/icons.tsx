@@ -1,5 +1,8 @@
 import type { SVGProps } from "react";
 
+/**
+ * @deprecated This icon is no longer used.
+ */
 export function ReceptionistIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg

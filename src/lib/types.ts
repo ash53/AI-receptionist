@@ -12,8 +12,11 @@ export interface Booking {
   name: string;
   email: string;
   phone: string;
-  date: Date;
-  time: string;
+  checkInDate: Date;
+  checkOutDate: Date;
+  guests: number;
+  roomType: 'single' | 'double' | 'suite';
+  status: 'pending' | 'confirmed';
   createdAt: Date;
 }
 
