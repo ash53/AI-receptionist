@@ -27,6 +27,16 @@ const faq: Record<string, string> = {
     'directions': 'You can find us easily by searching for "Grand Hotel" on your favorite map application. We are right next to the City Museum.'
 };
 
+function FormattedTime({ timestamp }: { timestamp: Date }) {
+    const [timeString, setTimeString] = useState('');
+  
+    useEffect(() => {
+      setTimeString(new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    }, [timestamp]);
+  
+    return timeString || null;
+}
+
 export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -174,7 +184,7 @@ export default function ChatPage() {
                       'mt-1 text-xs text-muted-foreground',
                       message.sender === 'user' ? 'text-right' : 'text-left'
                     )}>
-                      {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      <FormattedTime timestamp={message.timestamp} />
                     </p>
                   </div>
                   {message.sender === 'user' && (
