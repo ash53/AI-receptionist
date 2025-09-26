@@ -19,6 +19,10 @@ export type HotelReceptionistInput = z.infer<typeof HotelReceptionistInputSchema
 const HotelReceptionistOutputSchema = z.object({
   answer: z.string().describe('The AI\'s answer to the guest\'s question.'),
   shouldBook: z.boolean().describe('Whether the user is expressing intent to book a room.'),
+  shouldCancel: z.boolean().describe('Whether the user wants to cancel a reservation.'),
+  shouldReschedule: z.boolean().describe('Whether the user wants to reschedule a reservation.'),
+  shouldCreateTicket: z.boolean().describe('Whether the AI cannot handle the request and a support ticket should be created.'),
+  ticketIssue: z.string().optional().describe('If a ticket should be created, this is the summary of the issue.')
 });
 export type HotelReceptionistOutput = z.infer<typeof HotelReceptionistOutputSchema>;
 
@@ -39,7 +43,10 @@ const prompt = ai.definePrompt({
   "{{{question}}}"
 
   - Answer the guest's question concisely and politely.
-  - If the guest indicates they want to book a room, make a reservation, or check availability, set the 'shouldBook' flag to true in your response. Do not ask them for booking details, just set the flag.
+  - If the guest indicates they want to book a room, make a reservation, or check availability, set the 'shouldBook' flag to true. Do not ask them for booking details, just set the flag.
+  - If the guest wants to cancel a booking, set 'shouldCancel' to true.
+  - If the guest wants to change or reschedule a booking, set 'shouldReschedule' to true.
+  - If you cannot answer the question or fulfill the request, set 'shouldCreateTicket' to true and summarize the user's issue in the 'ticketIssue' field. Examples include requests for a human, complex complaints, or questions outside your knowledge base.
   - Keep your answers brief and to the point.
   - Do not answer questions that are not related to the hotel.
   `,

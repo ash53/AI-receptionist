@@ -9,6 +9,8 @@ import {
   Building,
   LogOut,
   ChevronLeft,
+  Phone,
+  Ticket,
 } from "lucide-react";
 
 import {
@@ -35,6 +37,8 @@ export default function AdminLayout({
   const menuItems = [
     { href: "/admin/chats", label: "Chats", icon: MessageSquare },
     { href: "/admin/appointments", label: "Bookings", icon: Calendar },
+    { href: "/admin/calls", label: "Calls", icon: Phone },
+    { href: "/admin/tickets", label: "Tickets", icon: Ticket },
     { href: "/admin/training", label: "AI Training", icon: BrainCircuit },
   ];
 

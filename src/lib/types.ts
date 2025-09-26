@@ -21,7 +21,7 @@ export interface Booking {
 }
 
 export interface Chat {
-  id: string;
+  id:string;
   user: {
     id: string;
     name: string;
@@ -30,4 +30,26 @@ export interface Chat {
   startTime: Date;
   endTime: Date;
   summary?: string;
+}
+
+export interface Call {
+  id: string;
+  from: string;
+  startTime: Date;
+  endTime: Date;
+  transcript: string;
+  summary: string;
+  status: 'completed' | 'unresolved';
+}
+
+export interface SupportTicket {
+    id: string;
+    source: 'chat' | 'call';
+    customerName: string;
+    customerContact: string;
+    issue: string;
+    status: 'open' | 'resolved';
+    createdAt: Date;
+    chatId?: string;
+    callId?: string;
 }
