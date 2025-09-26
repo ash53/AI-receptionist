@@ -42,6 +42,16 @@ const mockTickets: SupportTicket[] = [
     callId: "call-2",
   },
   {
+    id: "ticket-4",
+    source: "call",
+    customerName: "Unknown Caller",
+    customerContact: "+14155552678",
+    issue: "User wants to know if they can bring their pet tiger. The AI was not sure how to answer.",
+    status: "open",
+    createdAt: new Date(Date.now() - 3600000 * 0.5),
+    callId: "call-4",
+  },
+  {
     id: "ticket-3",
     source: 'chat',
     customerName: 'Eve',
@@ -78,7 +88,7 @@ export default function AdminTicketsPage() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {mockTickets.map((ticket) => (
+                    {mockTickets.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).map((ticket) => (
                         <TableRow key={ticket.id}>
                             <TableCell>
                                 <div className="font-medium">{ticket.customerName}</div>
